@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>注册</title>
+</head>
+<body>
+<form action="/register" method="post" onsubmit="return contentCheck()">
+    请输入账号:<input type="text" name="account" id="a"><br>
+    请输入密码:<input type="text" name="password" id="p">
+    再次确认密码:<input type="text" name="password_again" id="pa">
+    <input type="submit" value="注册" onclick="commitFunction()">
+</form>
+<p id="tip"></p>
+<script>
+    function contentCheck() {
+        var account,password,password_again;
+        account = document.getElementById("a").value;
+        password = document.getElementById("p").value;
+        password_again = document.getElementById("pa").value;
+
+        var tip;
+        if (account.length <= 0) {
+            tip = "账号不能为空";
+        }else if (password.length <= 0) {
+            tip = "密码不能为空";
+        }else if (password_again.length <= 0) {
+            tip = "请再次输入密码";
+        }else if (password != password_again) {
+            tip = "两次输入的密码不一致";
+        }
+        if (tip.length > 0) {
+            document.getElementById("tip").innerHTML = tip;
+            return false;
+        }else {
+            return true;
+        }
+    }
+</script>
+</body>
+</html>
