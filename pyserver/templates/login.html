@@ -5,10 +5,111 @@
     <title>登录</title>
 </head>
 <body>
-<form action="/login" method="post">
-    请输入账号:<input type="text" name="account"><br>
-    请输入密码:<input type="text" name="password">
-    <input type="submit" value="登录">
+<form action="javascript: void(0);" method="post" id="loginInput" >
+    请输入账号:<input type="text" name="account" id="a"><br>
+    请输入密码:<input type="text" name="password" id="p">
+{#    <input type="submit" value="登录" id="submitInput">#}
+    <button id="btn" onclick="return submitForm()">登录</button>
 </form>
+<p id="tip"></p>
+{#<iframe id="myIframe" name="myIframe"></iframe>#}
+<script>
+    // function submitForm() {
+    //     var account,password;
+    //     account = document.getElementById("a").value;
+    //     password = document.getElementById("p").value;
+
+    //     var tip;
+    //     if (account.length <= 0) {
+    //         tip = "账号不能为空";
+    //     }else if (password.length <= 0) {
+    //         tip = "密码不能为空";
+    //     }
+    //     if (tip.length > 0) {
+    //         document.getElementById("tip").innerHTML = tip;
+    //     }
+
+    //     return false;
+    // }
+
+        /* 封装ajax函数
+  * @param {string}opt.type http连接的方式，包括POST和GET两种方式
+  * @param {string}opt.url 发送请求的url
+  * @param {boolean}opt.async 是否为异步请求，true为异步的，false为同步的
+  * @param {object}opt.data 发送的参数，格式为对象类型
+  * @param {function}opt.success ajax发送并接收成功调用的回调函数
+  */
+  function ajax(opt) {
+         opt = opt || {};
+         opt.method = opt.method.toUpperCase() || 'POST';
+         opt.url = opt.url || '';
+         opt.async = opt.async || true;
+         opt.data = opt.data || null;
+         opt.success = opt.success || function () {};
+         var xmlHttp = null;
+         if (XMLHttpRequest) {
+             xmlHttp = new XMLHttpRequest();
+         }
+         else {
+             xmlHttp = new ActiveXObject('Microsoft.XMLHTTP');
+         }var params = [];
+         for (var key in opt.data){
+             params.push(key + '=' + opt.data[key]);
+         }
+         var postData = params.join('&');
+         if (opt.method.toUpperCase() === 'POST') {
+             xmlHttp.open(opt.method, opt.url, opt.async);
+             xmlHttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded;charset=utf-8');
+             xmlHttp.send(postData);
+         }
+         else if (opt.method.toUpperCase() === 'GET') {
+             xmlHttp.open(opt.method, opt.url + '?' + postData, opt.async);
+             xmlHttp.send(null);
+         }
+         xmlHttp.onreadystatechange = function () {
+             if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
+                 opt.success(xmlHttp.responseText);
+             }
+         };
+     }
+
+
+    function submitForm() {
+        var account,password;
+        account = document.getElementById("a").value;
+        password = document.getElementById("p").value;
+
+        var tip;
+        if (account.length <= 0) {
+            tip = "账号不能为空";
+        }else if (password.length <= 0) {
+            tip = "密码不能为空";
+        } else {
+            tip = null;
+        }
+        if (tip && tip.length > 0) {
+            document.getElementById("tip").innerHTML = tip;
+        }
+        if (!tip) {
+            ajax({
+                method: 'POST',
+                url: 'http://127.0.0.1:8000/login', //后端接口地址
+                data: {
+                    "account": account,
+                    "password": password
+                },
+                success: function (response) {
+                    // 后端返回结果
+                    console.log(response);
+                    result = response['result'];
+                    document.getElementById("tip").innerHTML = tip;
+                }
+            });
+        }
+
+        return false;
+    }
+
+</script>
 </body>
 </html>

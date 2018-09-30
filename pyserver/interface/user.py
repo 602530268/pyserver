@@ -2,6 +2,9 @@ from django.shortcuts import render
 from django.http import JsonResponse
 from django.shortcuts import render_to_response
 from user.models import User
+from django.shortcuts import render
+
+# 用户登录、注册接口
 
 def login_html(request):
     return render_to_response('login.html')

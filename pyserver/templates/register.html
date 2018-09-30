@@ -5,15 +5,15 @@
     <title>注册</title>
 </head>
 <body>
-<form action="/register" method="post" onsubmit="return contentCheck()">
+<form action="/register" method="post" onsubmit="return submitForm()">
     请输入账号:<input type="text" name="account" id="a"><br>
     请输入密码:<input type="text" name="password" id="p">
     再次确认密码:<input type="text" name="password_again" id="pa">
-    <input type="submit" value="注册" onclick="commitFunction()">
+    <input type="submit" value="注册">
 </form>
 <p id="tip"></p>
 <script>
-    function contentCheck() {
+    function submitForm() {
         var account,password,password_again;
         account = document.getElementById("a").value;
         password = document.getElementById("p").value;
@@ -31,10 +31,8 @@
         }
         if (tip.length > 0) {
             document.getElementById("tip").innerHTML = tip;
-            return false;
-        }else {
-            return true;
         }
+        return false;
     }
 </script>
 </body>
