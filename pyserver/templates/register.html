@@ -5,14 +5,56 @@
     <title>注册</title>
 </head>
 <body>
-<form action="/register" method="post" onsubmit="return submitForm()">
+<form action="javascript: void(0);" method="post">
     请输入账号:<input type="text" name="account" id="a"><br>
     请输入密码:<input type="text" name="password" id="p">
     再次确认密码:<input type="text" name="password_again" id="pa">
-    <input type="submit" value="注册">
+    <button id="btn" onclick="return submitForm()">注册</button>
 </form>
 <p id="tip"></p>
 <script>
+
+        /* 封装ajax函数
+  * @param {string}opt.type http连接的方式，包括POST和GET两种方式
+  * @param {string}opt.url 发送请求的url
+  * @param {boolean}opt.async 是否为异步请求，true为异步的，false为同步的
+  * @param {object}opt.data 发送的参数，格式为对象类型
+  * @param {function}opt.success ajax发送并接收成功调用的回调函数
+  */
+     function ajax(opt) {
+         opt = opt || {};
+         opt.method = opt.method.toUpperCase() || 'POST';
+         opt.url = opt.url || '';
+         opt.async = opt.async || true;
+         opt.data = opt.data || null;
+         opt.success = opt.success || function () {};
+         var xmlHttp = null;
+         if (XMLHttpRequest) {
+             xmlHttp = new XMLHttpRequest();
+         }
+         else {
+             xmlHttp = new ActiveXObject('Microsoft.XMLHTTP');
+         }var params = [];
+         for (var key in opt.data){
+             params.push(key + '=' + opt.data[key]);
+         }
+         var postData = params.join('&');
+         if (opt.method.toUpperCase() === 'POST') {
+             xmlHttp.open(opt.method, opt.url, opt.async);
+             xmlHttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded;charset=utf-8');
+             xmlHttp.send(postData);
+         }
+         else if (opt.method.toUpperCase() === 'GET') {
+             xmlHttp.open(opt.method, opt.url + '?' + postData, opt.async);
+             xmlHttp.send(null);
+         }
+         xmlHttp.onreadystatechange = function () {
+             if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
+                 opt.success(xmlHttp.responseText);
+             }
+         };
+     }
+
     function submitForm() {
         var account,password,password_again;
         account = document.getElementById("a").value;
@@ -28,10 +70,38 @@
             tip = "请再次输入密码";
         }else if (password != password_again) {
             tip = "两次输入的密码不一致";
+        } else {
+            tip = null;
         }
-        if (tip.length > 0) {
+        if (tip && tip.length > 0) {
             document.getElementById("tip").innerHTML = tip;
         }
+
+        if (!tip) {
+            ajax({
+                method: 'POST',
+                url: 'http://127.0.0.1:8000/register', //后端接口地址
+                data: {
+                    "account": account,
+                    "password": password
+                },
+                success: function (response) {
+                    // 后端返回结果
+                    console.log(response);
+                    var json = JSON.parse(response);
+                    var code = json["code"];
+
+                    if (code == 0) {
+                        var link = json["link"];
+                        window.location.href = link;
+                    }else {
+                        var result = json["result"];
+                        document.getElementById("tip").innerHTML = result;
+                    }
+                }
+            });
+        }
+
         return false;
     }
 </script>

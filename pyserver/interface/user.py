@@ -57,4 +57,5 @@ def register(request):
             result = "the account is exist."
 
     return JsonResponse({"code":code,
-                         "result":result})
+                         "result":result,
+                         "link":"login-html",})
